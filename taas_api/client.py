@@ -133,6 +133,19 @@ class Client(BaseClient):
 
         return self.post(path="/api/orders/", data=request.to_post_body())
 
+    def place_atomic_order(self, request: data.PlaceAtomicOrderRequest):
+        if not isinstance(request, data.PlaceAtomicOrderRequest):
+            raise ValueError(
+                f"Expecting request to be of type {data.PlaceAtomicOrderRequest}"
+            )
+
+        validate_success, errors = request.validate()
+
+        if not validate_success:
+            raise ValueError(str(errors))
+
+        return self.post(path="/api/orders/", data=request.to_post_body())
+
     def cancel_order(self, order_id: str):
         return self.delete(path=f"/api/order/{order_id}")
 

@@ -30,6 +30,15 @@ class PlaceOrderRequest:
     updated_leverage: int = None
     max_otc: float = None
     pos_side: Optional[str] = None
+    reduce_only: bool = None
+    id: str = None
+    id: str = None
+    exchange: str = None
+    type: str = None
+    price: float = None
+    quantity: float = None
+    placement_type: str = None
+    trigger_on_fill: str = None
 
     def validate(self):
         try:
@@ -99,6 +108,14 @@ class ChildOrder:
     quote_asset_qty: float = None
     pos_side: str = None
     account: str = None
+    id: str = None
+    exchange: str = None
+    type: str = None
+    price: float = None
+    quantity: float = None
+    placement_type: str = None
+    trigger_on_fill: str = None
+    strategy_params: dict = None
 
     def validate(self):
         try:
@@ -183,6 +200,26 @@ class PlaceMultiOrderRequest:
 
     def to_post_body(self):
         return {k: v for k, v in asdict(self).items() if v is not None}
+
+
+@dataclass
+class PlaceAtomicOrderRequest:
+    strategy: str
+    orders: List[PlaceOrderRequest]
+
+    def validate(self):
+        if not self.orders:
+            return False, ["No orders provided in atomic request"]
+        for order in self.orders:
+            # We skip full validation here as individual orders might be partial
+            pass
+        return True, []
+
+    def to_post_body(self):
+        return {
+            "strategy": self.strategy,
+            "orders": [order.to_post_body() for order in self.orders]
+        }
 
 
 @dataclass

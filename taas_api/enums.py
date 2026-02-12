@@ -20,6 +20,11 @@ class PosSide(Enum):
     SHORT = "short"
 
 
+class PlacementType(Enum):
+    MAKER = "MAKER"
+    TAKER = "TAKER"
+
+
 class OrderStatus(Enum):
     SCHEDULED = "SCHEDULED"
     ACTIVE = "ACTIVE"
