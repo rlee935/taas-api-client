@@ -7,6 +7,7 @@ import time
 from taas_api import data
 
 logger = logging.getLogger(__name__)
+payload_logger = logging.getLogger("taas_api.payload_logger")
 
 
 class BaseClient:
@@ -24,9 +25,11 @@ class BaseClient:
     def post(self, path: str, data: dict):
         start_time = time.perf_counter()
         response = None
+        headers = self._common_headers()
+        payload_logger.info(f"POST {path} headers={headers} data={data}")
         try:
             response = requests.post(
-                urljoin(self.taas_url, path), headers=self._common_headers(), json=data
+                urljoin(self.taas_url, path), headers=headers, json=data
             )
             return self._handle_response(response)
         finally:
@@ -37,10 +40,12 @@ class BaseClient:
     def get(self, path: str, params: dict = {}):
         start_time = time.perf_counter()
         response = None
+        headers = self._common_headers()
+        payload_logger.info(f"GET {path} headers={headers} params={params}")
         try:
             response = requests.get(
                 urljoin(self.taas_url, path),
-                headers=self._common_headers(),
+                headers=headers,
                 params=params,
             )
             return self._handle_response(response)
@@ -52,9 +57,11 @@ class BaseClient:
     def delete(self, path: str):
         start_time = time.perf_counter()
         response = None
+        headers = self._common_headers()
+        payload_logger.info(f"DELETE {path} headers={headers}")
         try:
             response = requests.delete(
-                urljoin(self.taas_url, path), headers=self._common_headers()
+                urljoin(self.taas_url, path), headers=headers
             )
             return self._handle_response(response)
         finally:
